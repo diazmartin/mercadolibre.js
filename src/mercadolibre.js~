@@ -36,7 +36,7 @@ window.MercadoLibre = {
   getToken: function() {
     var token = this._get('access_token')
     if(token){
-        var dExp = new Date(this._get('date_to_expire_in_as_ms') )
+        var dExp = new Date( 0 + this._get('date_to_expire_in_as_ms') )
         var now = new Date()
         if(dExp < now){
             token = null
