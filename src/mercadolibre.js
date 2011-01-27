@@ -1,10 +1,10 @@
 ;(function(cookie) {
-
-var MercadoLibre = {
+window.MercadoLibre = {
   baseURL: "https://api.mercadolibre.com",
   
-  authorizationURL: {"MLA":"http://auth-frontend.mercadolibre.com.ar/authorization",
-                     "MCR":"http://auth-frontend.mercadolibre.co.cr/authorization"},
+  authorizationURL: {"MLA":"https://auth-frontend.mercadolibre.com.ar/authorization",
+                     "MCR":"http://auth-frontend.mercadolibre.co.cr/authorization",
+                     "MPA":"http://auth-frontend.mercadolibre.com.pa/authorization"},
   //600 seconds = 10 minutes
   silentAuthorizationRetryInterval: 600,
   
@@ -19,8 +19,8 @@ var MercadoLibre = {
 
     //Replace defaults
     if (this.options.sandbox) this.baseURL = this.baseURL.replace(/api\./, "sandbox.")
-    window.Storage.init({"disableLocalStorage": this.options.disableLocalStorage})
     if (this.options.silentAuthorizationRetryInterval) this.silentAuthorizationRetryInterval = this.options.silentAuthorizationRetryInterval
+    this.options.isSessionStorageEnable = options.isSessionStorageEnable ? options.isSessionStorageEnable : true
     
     this._initAuthorization()
   },
@@ -34,15 +34,28 @@ var MercadoLibre = {
   },
 
   getToken: function() {
-    var token = this._get('access_token')
+    var token = null
+    if(this.options.isSessionStorageEnable && this._browserHasSessionStorageSupport() ){
+      var secret = this._get('secret')
+      var cryptedToken = cookie("access_token")
+      if(secret && secret != "" && cryptedToken ){
+          var message  = window.DESExtras.hexToString(cryptedToken)
+          token = window.DESCipher.des(secret, message, 0/*encrypt=false*/, 0/*vector=false*/, null/*vector*/)
+          originalLength = parseInt(this._get("access_token_original_length"))
+          token = token.substring(0, originalLength)
+      }
+    }else{
+      token = this._get('access_token')
+    }
+  
     if(token){
-        var dExp = new Date(this._get('date_to_expire_in_as_ms') )
+        var dExp = new Date( parseInt(this._get('date_to_expire_in_as_ms')) )
         var now = new Date()
         if(dExp < now){
             token = null
         }
     }
-    return (token && token.length > 0) ? token : null
+    return (token && token.length > 0 ) ? token : null
   },
   
   requireLogin: function(callback) {
@@ -77,14 +90,14 @@ var MercadoLibre = {
   },
 
   logout: function() {
-    this._set("access_token", null)
-    this._set("expires_in", null)
+    this._set("access_token", "")
+    this._set("expires_in", "")
     this._triggerSessionChange()
   },
-  
+    
   removeAccessToken:function() {
-    this._set("access_token", null)
-    this._set("expires_in", null)
+    this._set("access_token", "")
+    this._set("expires_in", "")
     this._triggerSessionChange()
   },
     
@@ -105,6 +118,7 @@ var MercadoLibre = {
   },
  
   _initAuthorization: function(){
+    //Clean old credentials
     this.get("/applications/"+this.options.client_id, function(resp){
         this.MercadoLibre.client = resp[2]
         this.MercadoLibre.site_id = resp[2].site_id
@@ -120,9 +134,10 @@ var MercadoLibre = {
     this._cleanIframe()
     if(this._popupWindow) this._popupWindow.close()
     //Set up the next silent authorization
-    this._repeatAuthorizationAfter(this._get("expires_in"))
-    var dateToExpireInAsMS = new Date().getTime() + (this._get("expires_in")) * 1000
-    this._set("date_to_expire_in_as_ms", dateToExpireInAsMS)
+    //var expiresIn = parseInt(this._get("expires_in"))
+    //this._repeatAuthorizationAfter( expiresIn )
+    //var dateToExpireInAsMS = new Date().getTime() + (expiresIn) * 1000
+    //this._set("date_to_expire_in_as_ms", dateToExpireInAsMS)
     //Do user staff
     this._triggerSessionChange()
     if (this.pendingCallback) this.pendingCallback()
@@ -131,7 +146,7 @@ var MercadoLibre = {
   _cleanIframe:function(){
     if(this._iframe)
         document.body.removeChild(this._iframe)
-        this._iframe = null
+    this._iframe = null
   },
 
   _triggerSessionChange: function() {
@@ -155,7 +170,7 @@ var MercadoLibre = {
             window.opener.MercadoLibre._loginComplete()  
         }else if(this.hash.state == "iframe"){
             if(this.hash.error == "not_logged_in" || this.hash.error == "unauthorized_application"){
-                window.parent.MercadoLibre._repeatAuthorizationAfter(window.parent.MercadoLibre.silentAuthorizationRetryInterval)
+                //window.parent.MercadoLibre._repeatAuthorizationAfter(window.parent.MercadoLibre.silentAuthorizationRetryInterval)
             }else{
                 window.parent.MercadoLibre._loginComplete()  
             }
@@ -195,8 +210,16 @@ var MercadoLibre = {
     }
 
     if (this.hash.access_token) {
-      this._set("access_token",this.hash.access_token)
-      this._set("expires_in", parseInt(this.hash.expires_in))  
+      var parent = null
+      if(this.hash.state == "popup"){
+        parent = window.opener
+      }else if(this.hash.state == "iframe"){
+        parent = window.parent
+      }
+      if(parent){
+          parent.MercadoLibre._setToken(this.hash.access_token)
+          parent.MercadoLibre._set("expires_in", parseInt(this.hash.expires_in))  
+      }
       window.location.hash = ""
     }
   },
@@ -204,7 +227,7 @@ var MercadoLibre = {
   
   _get:function(key){
     var value = null
-    if( this._browserHasLocalStorageSupport() ){
+    if( this.options.isSessionStorageEnable && this._browserHasSessionStorageSupport() ){
         value = window.localStorage[key]
     }else{
         value = this._map[key]
@@ -213,14 +236,50 @@ var MercadoLibre = {
   },
   
   _set:function(key, value){
-    if( this._browserHasLocalStorageSupport()){
+    if( this.options.isSessionStorageEnable && this._browserHasSessionStorageSupport()  ){
         window.localStorage[key] = value         
     }else{
         this._map[key] = value
     }
   },
   
-  _browserHasLocalStorageSupport:function() {
+  _generateSecret:function(){
+        var a = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z',
+             'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z',
+             '1','2','3','4','5','6','7','8','9','0']
+        shuffle = function(v){
+            for(var j, x, i = v.length; i; j = parseInt(Math.random() * i), x = v[--i], v[i] = v[j], v[j] = x);
+            return v;
+        };
+        a = shuffle(a)
+        var secret = a.slice(0,8).join("")
+        return secret
+  },
+  
+  _encrypt:function(secret, message){
+        var crypto = window.DESCipher.des(secret, message, 1/*encrypt=true*/, 0/*vector ? 1 : 0*/, null/*vector*/)
+	    crypto = window.DESExtras.stringToHex(crypto)
+        return crypto
+  },
+  
+  _setToken:function(access_token){
+    if( this.options.isSessionStorageEnable && this._browserHasSessionStorageSupport() ){
+        //genera la clave de cifrado
+        secret = this._generateSecret()
+        this._set("secret", secret)
+        this._set("access_token_original_length", access_token.length)
+        //cifrar el access_token
+        cryptedToken = this._encrypt(secret, access_token)
+        //guardarlo en la cookie
+        options = {"domain": this.options.cookiesDomain ? this.options.cookiesDomain : localhost.hostname}
+        cookie("access_token",cryptedToken, options)
+    }else{
+        //guardar el access_token en el storage que tiene scope de pagina
+        this._set(access_token)
+    }
+  },
+  
+  _browserHasSessionStorageSupport:function() {
         try {
             return !!window.localStorage.getItem
         } catch(e) {
@@ -248,7 +307,5 @@ var MercadoLibre = {
 MercadoLibre._parseHash()
 
 MercadoLibre._checkPostAuthorization()
-
-window.MercadoLibre = MercadoLibre;
 
 })(cookie);
