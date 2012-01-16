@@ -2185,6 +2185,8 @@ var XAuth = (function () {
 		//initialization: set base domains an url. Initialize XAuth on base window
 		init : function(options) {
 			this.options = options;
+      if (typeof(this.options.site_id) == "undefined")
+        this.options.site_id = "MLA";
 
 			this.messages = (window.postMessage && window.localStorage && window.JSON);
 
@@ -2226,7 +2228,7 @@ var XAuth = (function () {
 		},
 		_initXAuthClient: function() {
 			if(!this.options.xauth_domain)
-				this.options.xauth_domain = "static.mlstatic.com";
+				this.options.xauth_domain = "tioborracho.github.com";
 			if(!this.options.auth_timeout)
 				this.options.auth_timeout = 3000;
 
@@ -2234,7 +2236,7 @@ var XAuth = (function () {
 				this.options.xauth_domain = this.options.xauth_domain_fallback;
 
 			if(!this.options.xd_url)
-				this.options.xd_url = "/xd.html";
+				this.options.xd_url = "/mercadolibre.js/xd_sdk.html";
 
 			if(!this.options.xauth_protocol)
 				this.options.xauth_protocol = "http://";
