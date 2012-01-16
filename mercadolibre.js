@@ -2554,7 +2554,7 @@ var XAuth = (function () {
         this._logout();
 		},
     _logout: function() {
-      this._iframe(this._logoutURL(), "logoutFrame");
+      MELI._iframe(MELI._logoutURL(), "logoutFrame");
     },
 		_triggerSessionChange : function() {
 			this.trigger("session.change", [this.getToken() ? true : false]);
