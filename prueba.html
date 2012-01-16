@@ -29,9 +29,9 @@
           // Additional initialization code here
       MELI.get("/users/me", {},function(data) {
       if (data[0] == 200) {
-        appendText(document.getElementById("user"), data[2].nickname);
-        appendText(document.getElementById("name"), data[2].first_name);
-        appendText(document.getElementById("lastname"), data[2].last_name);
+        appendText(document.getElementById("user"), data[2].nickname, true);
+        appendText(document.getElementById("name"), data[2].first_name, true);
+        appendText(document.getElementById("lastname"), data[2].last_name, true);
       }});
 
     
