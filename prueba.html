@@ -39,7 +39,7 @@
     function loadData(){
       
     MELI.getLoginStatus(function(status) {
-      if (!status && status.state != "AUTHORIZED")
+      if (!status || status.state != "AUTHORIZED")
         MELI.login(getData);
       else
         getData();
