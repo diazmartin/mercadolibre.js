@@ -1,7 +1,7 @@
 <html>
 <head>
 </head>
-<body >
+<body onLoad="initData();">
   <script>
     function appendText(node,txt, clear)
       {
@@ -36,14 +36,18 @@
 
     
     }
-    function loadData(){
-      
-    MELI.getLoginStatus(function(status) {
-      if (!status || status.state != "AUTHORIZED")
-        MELI.login(getData);
-      else
-        getData();
-    });
+    function loginAndGetData() {
+      MELI.login(getData);
+    }
+    function initData() {
+      MELI.getLoginStatus(function(status) {
+        if (!status || status.state != "AUTHORIZED")
+          loadData = loginAndGetData;
+        else
+          loadData = getData;
+      });
+    }
+    var loadData;
 }
   window.mlAsyncInit = function() {
     MELI.init({client_id: 4105});
@@ -73,8 +77,6 @@
   </table>
   <button onClick="loadData();">Get data</button>
   <button onClick="logout();">Logout</button>
-  <button onClick='window.open("http://www.w3schools.com")'>Logout</button>
-  <button onClick='prueba()'>Logout</button>
 </body>
 </html>
 
