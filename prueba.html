@@ -35,6 +35,8 @@
     MELI.getLoginStatus(function(status) {
       if (!status && status.state != "AUTHORIZED")
         MELI.login(getData);
+      else
+        getData();
     });
 }
   window.mlAsyncInit = function() {
