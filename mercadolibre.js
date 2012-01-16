@@ -2635,6 +2635,7 @@ var XAuth = (function () {
 				if(authorizationState != null) {
 					var secret = this._storeAuthorizationState(authorizationState);
 					this._notifyParent({ methodName : parentMethod, secret : secret });
+          close();
 				}
 			} else if(this.hash.action == "logout") {
 				this._notifyParent({
