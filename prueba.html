@@ -3,13 +3,19 @@
 </head>
 <body >
   <script>
-    function appendText(node,txt)
+    function appendText(node,txt, clear)
       {
-        node.appendChild(document.createTextNode(txt));
+        if (!node.firstChild)
+          node.appendChild(document.createTextNode(''));
+        if (clear)
+          node.firstChild.nodeValue = ''
+        node.firstChild.nodeValue += txt;
       }
       function logout() {
         MELI.logout();
-        setTimeout('reload();', 2000);
+        appendText(document.getElementById("user"), 'n/a', true);
+        appendText(document.getElementById("name"), 'n/a', true);
+        appendText(document.getElementById("lastname"), 'n/a', true);
       }
       function login() {
         MELI.login();
@@ -63,7 +69,7 @@
     <tr><td>Apellido:</td><td id="lastname"></td></tr>
   </table>
   <button onClick="loadData();">Get data</button>
-  <button onClick="login();">Login</button>
+  <button onClick="logout();">Logout</button>
 </body>
 </html>
 
