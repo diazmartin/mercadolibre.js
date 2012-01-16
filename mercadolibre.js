@@ -2548,7 +2548,7 @@ var XAuth = (function () {
 			//expire xauth key
 			this._expireToken(this._getKey());
 			//logout from meli
-			if(this.appInfo == null) {
+			if(this.appInfo == null) 
 					this._getApplicationInfo(this._logout);
       else
         this._logout();
