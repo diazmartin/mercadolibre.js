@@ -2553,7 +2553,7 @@ var XAuth = (function () {
       else
         this._logout();
 		},
-    _logout() {
+    _logout: function() {
       this._iframe(this._logoutURL(), "logoutFrame");
     },
 		_triggerSessionChange : function() {
