@@ -2160,6 +2160,7 @@ var XAuth = (function () {
 		authorizationStateCallbackInProgress : false,
 		authorizationStateCallbackTimer : null,
 		synchronizationInProgress : false,
+    postLoginCallback: null,
 		unknownStatus : {
 			state : "UNKNOWN",
 			authorization_info : {
@@ -2488,12 +2489,13 @@ var XAuth = (function () {
 				}
 			});
 		},
-		login : function() {
+		login : function(callback) {
 			if(!this.initialized) {
 				this.initCallbacks.push(this.login);
 				return;
 			}
-
+      //enqueue callback in session change
+      if (callback) this.postLoginCallback = callback;
 			this._popup(this._authorizationURL(true));
 		},
 		_iframe : function(url, id) {
@@ -2550,6 +2552,11 @@ var XAuth = (function () {
 		},
 		_triggerSessionChange : function() {
 			this.trigger("session.change", [this.getToken() ? true : false]);
+      if (this.postLoginCallback) {
+        var local = this.postLoginCallback;
+        this.postLoginCallback = null;
+        local();
+      }
 		},
 		getSession : function() {
 			return this.authorizationState[this._getKey()];
