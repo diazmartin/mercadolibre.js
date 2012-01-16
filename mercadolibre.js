@@ -2548,8 +2548,14 @@ var XAuth = (function () {
 			//expire xauth key
 			this._expireToken(this._getKey());
 			//logout from meli
-			this._iframe(this._logoutURL(), "logoutFrame");
+			if(this.appInfo == null) {
+					this._getApplicationInfo(this._logout);
+      else
+        this._logout();
 		},
+    _logout() {
+      this._iframe(this._logoutURL(), "logoutFrame");
+    },
 		_triggerSessionChange : function() {
 			this.trigger("session.change", [this.getToken() ? true : false]);
       if (this.postLoginCallback) {
