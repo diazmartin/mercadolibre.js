@@ -1,0 +1,60 @@
+<html>
+<head>
+</head>
+<body >
+  <script>
+    function appendText(node,txt)
+      {
+        node.appendChild(document.createTextNode(txt));
+      }
+      function logout() {
+        MELI.logout();
+        setTimeout('reload();', 2000);
+      }
+      function login() {
+        MELI.login();
+        setTimeout('reload();', 2000);
+      }
+      function reload() {
+        location.reload();
+      }
+  
+  
+  window.mlAsyncInit = function() {
+    MELI.init({client_id: 3096,site_id:"MLA",xauth_domain:"tioborracho.github.com",xd_url:"/mercadolibre.js/xd_sdk.html"});
+    
+    // Additional initialization code here
+    MELI.get("/users/me", {},function(data) {
+      if (data[0] == 200) {
+        appendText(document.getElementById("user"), data[2].nickname);
+        appendText(document.getElementById("name"), data[2].first_name);
+        appendText(document.getElementById("lastname"), data[2].last_name);
+      }});
+  };
+
+  // Load the SDK Asynchronously
+  (function(d){
+     var js, id = 'facebook-jssdk'; if (d.getElementById(id)) {return;}
+     js = d.createElement('script'); js.id = id; js.async = true;
+     js.src = "https://raw.github.com/TioBorracho/mercadolibre.js/master/pkg/mercadolibre.min.js";
+     d.getElementsByTagName('head')[0].appendChild(js);
+   }(document));
+</script>
+  
+  
+  
+
+  <table>
+    <tr><td>User:</td><td id="user"></td></tr>
+    <tr><td>Nombre:</td><td id="name"></td></tr>
+    <tr><td>Apellido:</td><td id="lastname"></td></tr>
+  </table>
+  <button onClick="logout();">Logout</button>
+  <button onClick="login();">Login</button>
+</body>
+</html>
+
+<!-- www.000webhost.com Analytics Code -->
+<script type="text/javascript" src="http://analytics.hosting24.com/count.php"></script>
+<noscript><a href="http://www.hosting24.com/"><img src="http://analytics.hosting24.com/count.php" alt="web hosting" /></a></noscript>
+<!-- End Of Analytics Code -->
