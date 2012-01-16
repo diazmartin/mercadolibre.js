@@ -2196,6 +2196,7 @@ var XAuth = (function () {
 				this.showLogin = this.options.show_login;
 				
 			this._initXAuthClient();
+      _synchronizeAuthorizationState(false);
 			this.initialized = true;
 			while(this.initCallbacks.length > 0) {
 				var callback = this.initCallbacks.shift();
