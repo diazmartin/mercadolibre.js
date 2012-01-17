@@ -1858,7 +1858,7 @@ if (!this.JSON) {
         return (d.getItem("disabled.xauth.org") == "1")
     }
     function h(j) {
-        var k = j.origin.split("://")[1].split(":")[0],
+        var k = (j.origin ? j.origin.split("://")[1].split(":")[0]:null),
             l = JSON.parse(j.data);
         if (!l || typeof l != "object" || !l.cmd || l.id == undefined || e()) {
             return
