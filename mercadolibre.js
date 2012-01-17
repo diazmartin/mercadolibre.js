@@ -2557,13 +2557,10 @@ var XAuth = (function () {
 					this._getApplicationInfo(this._logout);
       else
         this._logout();
-      },
-      _logout: function() {
-        MELI._iframe(MELI._logoutURL(), "logoutFrame");
-      },
-      
-			this._iframe(this._logoutURL(), "logoutFrame");
-		},
+    },
+    _logout: function() {
+      MELI._iframe(MELI._logoutURL(), "logoutFrame");
+    },
 		_triggerSessionChange : function() {
       if (this.postLoginCallback) {
         var local = this.postLoginCallback;
