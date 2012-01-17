@@ -1858,8 +1858,10 @@ if (!this.JSON) {
         return (d.getItem("disabled.xauth.org") == "1")
     }
     function h(j) {
-        var k = (j.origin ? j.origin.split("://")[1].split(":")[0]:null),
-            l = JSON.parse(j.data);
+        var k = j.origin.split("://")[1];
+        if (typeof(k) != "undefined") k = k.split(":")[0];
+        else k = j.origin;
+        var l = JSON.parse(j.data);
         if (!l || typeof l != "object" || !l.cmd || l.id == undefined || e()) {
             return
         }
