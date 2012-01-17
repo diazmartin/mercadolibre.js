@@ -1858,8 +1858,10 @@ if (!this.JSON) {
         return (d.getItem("disabled.xauth.org") == "1")
     }
     function h(j) {
-        var k = j.origin.split("://")[1].split(":")[0],
-            l = JSON.parse(j.data);
+        var k = j.origin.split("://")[1];
+        if (typeof(k) != "undefined") k = k.split(":")[0]
+        else k = "null";
+        var l = JSON.parse(j.data);
         if (!l || typeof l != "object" || !l.cmd || l.id == undefined || e()) {
             return
         }
@@ -2076,6 +2078,9 @@ var XAuth = (function () {
 		Store.prototype.setSecure = function(key, value, options) {
 			options = options || {};
 
+      if (typeof(this.options.site_id) == "undefined")
+        this.options.site_id = "MLA";
+
 			var secret = this._generateSecret();
 
 			var data = JSON.stringify(value.data);
@@ -2185,8 +2190,6 @@ var XAuth = (function () {
 		//initialization: set base domains an url. Initialize XAuth on base window
 		init : function(options) {
 			this.options = options;
-      if (typeof(this.options.site_id) == "undefined")
-        this.options.site_id = "MLA";
 
 			this.messages = (window.postMessage && window.localStorage && window.JSON);
 
@@ -2199,7 +2202,6 @@ var XAuth = (function () {
 				this.showLogin = this.options.show_login;
 				
 			this._initXAuthClient();
-      this._synchronizeAuthorizationState(false);
 			this.initialized = true;
 			while(this.initCallbacks.length > 0) {
 				var callback = this.initCallbacks.shift();
@@ -2228,7 +2230,7 @@ var XAuth = (function () {
 		},
 		_initXAuthClient: function() {
 			if(!this.options.xauth_domain)
-				this.options.xauth_domain = "tioborracho.github.com";
+				this.options.xauth_domain = "static.mlstatic.com";
 			if(!this.options.auth_timeout)
 				this.options.auth_timeout = 3000;
 
@@ -2236,7 +2238,7 @@ var XAuth = (function () {
 				this.options.xauth_domain = this.options.xauth_domain_fallback;
 
 			if(!this.options.xd_url)
-				this.options.xd_url = "/mercadolibre.js/xd_sdk.html";
+				this.options.xd_url = "/xd.html";
 
 			if(!this.options.xauth_protocol)
 				this.options.xauth_protocol = "http://";
@@ -2498,6 +2500,7 @@ var XAuth = (function () {
 			}
       //enqueue callback in session change
       if (callback) this.postLoginCallback = callback;
+
 			this._popup(this._authorizationURL(true));
 		},
 		_iframe : function(url, id) {
@@ -2554,17 +2557,21 @@ var XAuth = (function () {
 					this._getApplicationInfo(this._logout);
       else
         this._logout();
+      },
+      _logout: function() {
+        MELI._iframe(MELI._logoutURL(), "logoutFrame");
+      },
+      
+			this._iframe(this._logoutURL(), "logoutFrame");
 		},
-    _logout: function() {
-      MELI._iframe(MELI._logoutURL(), "logoutFrame");
-    },
 		_triggerSessionChange : function() {
-			this.trigger("session.change", [this.getToken() ? true : false]);
       if (this.postLoginCallback) {
         var local = this.postLoginCallback;
         this.postLoginCallback = null;
         local();
       }
+
+			this.trigger("session.change", [this.getToken() ? true : false]);
 		},
 		getSession : function() {
 			return this.authorizationState[this._getKey()];
