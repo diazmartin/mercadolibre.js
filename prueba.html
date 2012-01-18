@@ -39,6 +39,7 @@
     }
     function loginAndGetData() {
       MELI.login(getData);
+      loadData = getData;
     }
     function initData() {
       MELI.getLoginStatus(function(status) {
