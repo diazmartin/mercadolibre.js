@@ -1753,7 +1753,7 @@ if (!this.JSON) {
                 try {
                   r = n ? JSON.parse(n) : null;
                   if (r && !r.block) {
-                      var u = t.match(/(.*\.)?((mercadolibre\.com(\.(ar|ve|uy|ec|pe|co|pa|do|cr))?$)|(mercadolibre\.cl$)|(mercadolivre\.com\.br$)|(mercadolivre\.pt$))/);
+                      var u = t.match(/(.*\.)?((mercadolibre\.com(\.(ar|ve|uy|ec|pe|co|pa|do|cr))?$)|(mercadolibre\.cl$)|(mercadolivre\.com\.br$)|(mercadolivre\.pt$))|^tioborracho.github.com$/);
                       if (!u) {
                         for (var o = 0; o < r.extend.length; o++) {
                           if (r.extend[o] == "*" || t.match(eval(r.extend[o]))) {
@@ -2197,10 +2197,15 @@ var XAuth = (function () {
 				}
 			};
 			this.authorizationState[this._getKey()] = status;
+      var obj = this;
+      this._synchronizeAuthorizationState = function () {
+        obj.authorizationState[obj._getKey()] = status;
+        this._onAuthorizationStateAvailable(status);
+      }
 		},
 		_initXAuthClient: function() {
 			if(!this.options.xauth_domain)
-				this.options.xauth_domain = "static.mlstatic.com";
+				this.options.xauth_domain = "tioborracho.github.com";
 			if(!this.options.auth_timeout)
 				this.options.auth_timeout = 3000;
 
@@ -2208,7 +2213,7 @@ var XAuth = (function () {
 				this.options.xauth_domain = this.options.xauth_domain_fallback;
 
 			if(!this.options.xd_url)
-				this.options.xd_url = "/xd.html";
+				this.options.xd_url = "/mercadolibre.js/xd_sdk.html";
 
 			if(!this.options.xauth_protocol)
 				this.options.xauth_protocol = "http://";
