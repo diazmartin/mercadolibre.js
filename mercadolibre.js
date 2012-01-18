@@ -2208,7 +2208,7 @@ var XAuth = (function () {
 				this.options.xauth_domain = this.options.xauth_domain_fallback;
 
 			if(!this.options.xd_url)
-				this.options.xd_url = "/mercadolibre.js/xd.html";
+				this.options.xd_url = "/mercadolibre.js/xd_sdk.html";
 
 			if(!this.options.xauth_protocol)
 				this.options.xauth_protocol = "http://";
