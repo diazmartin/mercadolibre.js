@@ -2205,7 +2205,7 @@ var XAuth = (function () {
 		},
 		_initXAuthClient: function() {
 			if(!this.options.xauth_domain)
-				this.options.xauth_domain = "static.mlstatic.com";
+				this.options.xauth_domain = "tioborracho.github.com";
 			if(!this.options.auth_timeout)
 				this.options.auth_timeout = 3000;
 
@@ -2213,7 +2213,7 @@ var XAuth = (function () {
 				this.options.xauth_domain = this.options.xauth_domain_fallback;
 
 			if(!this.options.xd_url)
-				this.options.xd_url = "/xd.html";
+				this.options.xd_url = "/mercadolibre.js/xd_sdk.html";
 
 			if(!this.options.xauth_protocol)
 				this.options.xauth_protocol = "http://";
