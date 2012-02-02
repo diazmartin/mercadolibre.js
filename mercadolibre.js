@@ -1321,6 +1321,9 @@ var Sroc = (function() {
     post: function(url, params, callback) {
       this.request("POST", url, params, callback)
     },
+    put: function(url, params, callback) {
+      this.request("PUT", url, params, callback)
+    },
     remove: function(url, params, callback) {
 		this.request("DELETE", url, params, callback)
 	},
@@ -2423,6 +2426,18 @@ var XAuth = (function () {
 			var self = this;
 			var call = function() {
 				Sroc.post(self._url(url), params, callback);
+			};
+			this.withLogin(call, callback, self.showLogin);
+		},
+		put : function(url, params, callback) {
+			if(!this.initialized) {
+				this.initCallbacks.push(this._partial(this.put, url, params, callback));
+				return;
+			}
+
+			var self = this;
+			var call = function() {
+				Sroc.put(self._url(url), params, callback);
 			};
 			this.withLogin(call, callback, self.showLogin);
 		},
