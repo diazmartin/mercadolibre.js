@@ -75,9 +75,7 @@ var XAuth = (function () {
         var s = j.document;
         g = s.createElement("iframe");
         g.id = "xauthIFrame";
-        var r = g.style;
-        r.position = "absolute";
-        r.left = r.top = "-999px";
+        g.style.display="none";
         g.src = data.e;
         s.body.appendChild(g);
     }

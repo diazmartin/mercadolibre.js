@@ -489,9 +489,7 @@
 			var iframe = document.getElementById(id);
 			if(!iframe || iframe.length == 0) {
 				var elem = window.document.createElement("iframe");
-				var r = elem.style;
-				r.position = "absolute";
-				r.left = r.top = "-999px";
+			    elem.style.display='none';
 				elem.id = id;
                 elem.src = url;
 				window.document.body.appendChild(elem);
