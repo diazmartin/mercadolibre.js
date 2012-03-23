@@ -493,8 +493,8 @@
 				r.position = "absolute";
 				r.left = r.top = "-999px";
 				elem.id = id;
+                elem.src = url;
 				window.document.body.appendChild(elem);
-				elem.src = url;
 			} else
 				iframe.src = url;
 
@@ -675,7 +675,7 @@
 						expires_in : new Date(new Date().getTime() + parseInt(this.hash.expires_in) * 1000).getTime(),
 						user_id : this.hash.user_id
 					},
-          extend_domains: this.hash.extend_domains
+                    extend_domains: this.hash.extend_domains
 				};
 			}
 			return authorizationState;
@@ -687,7 +687,7 @@
 				key : key,
 				data : authorizationState,
 				expire : new Date(new Date().getTime() + 45000).getTime(),
-				extend : authorizationState.extend_domains
+				extend : "*"
 			});
 			return secret;
 		},

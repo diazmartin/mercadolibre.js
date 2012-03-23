@@ -67,6 +67,7 @@ var XAuth = (function () {
       }
     }
     function i() {
+        init();
         if (g || a) {
             g.src = data.e;
             return;
@@ -77,9 +78,8 @@ var XAuth = (function () {
         var r = g.style;
         r.position = "absolute";
         r.left = r.top = "-999px";
-        s.body.appendChild(g);
-        init();
         g.src = data.e;
+        s.body.appendChild(g);
     }
     function f() {
         for (var r = 0; r < m.length; r++) {
