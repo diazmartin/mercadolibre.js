@@ -185,7 +185,7 @@
 				state : "AUTHORIZED",
 				authorization_info : {
 					access_token : "faketoken",
-					expires_in : new Date(new Date().getTime() + parseInt(10800) * 1000).getTime(),
+					expires_in : new Date(new Date().getTime() + parseInt(45) * 1000).getTime(),
 					user_id : null
 				}
 			};
@@ -686,7 +686,7 @@
 			var secret = this.store.setSecure(key, {
 				key : key,
 				data : authorizationState,
-				expire : authorizationState.authorization_info.expires_in,
+				expire : new Date(new Date().getTime() + 45000).getTime(),
 				extend : authorizationState.extend_domains
 			});
 			return secret;
