@@ -54,14 +54,14 @@
     },
     getLoginStatus: function(callback, status) {
         //user has an active session?
-        if ((cookie("orgapi")=== null || cookie("orgapi") == "0")) {
+        if ((cookie("orgapi") === null || cookie("orgapi") == "0")) {
             //no session
             if (status && status.state == "AUTHORIZED") {
-                //no session but acvtive token. Shouldn't happen, expire token and fail
+                //no session but active token. Shouldn't happen, expire token and fail
                 this._expireToken(window.MELI._getKey());
                 status=window.MELI.unknownStatus;
             }
-        } 
+        }
         callback(status);
     }
   };

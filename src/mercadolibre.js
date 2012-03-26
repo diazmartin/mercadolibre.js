@@ -185,7 +185,7 @@
 				state : "AUTHORIZED",
 				authorization_info : {
 					access_token : "faketoken",
-					expires_in : new Date(new Date().getTime() + parseInt(45) * 1000).getTime(),
+					expires_in : new Date(new Date().getTime() + parseInt(10800) * 1000).getTime(),
 					user_id : null
 				}
 			};
@@ -685,7 +685,7 @@
 				key : key,
 				data : authorizationState,
 				expire : new Date(new Date().getTime() + 45000).getTime(),
-				extend : "*"
+				extend : authorizationState.extend_domains
 			});
 			return secret;
 		},
