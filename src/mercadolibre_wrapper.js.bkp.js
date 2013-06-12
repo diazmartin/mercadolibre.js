@@ -153,23 +153,6 @@ var cookie = function(name, value, options) {
       return orgapi != null && orgapi != "0";
     },
 
-    _isFromPortal: function(){
-      var hostpath=window.location.hostname.split('.')[0]
-      return hostpath=='ayuda' || hostpath=='contato'
-    },
-
-    _isDisabled: function(){
-      MELI.get(
-        "/users/me",{},
-          function(data) { 
-            if(data[2].site_status=='deactive')
-              return true;
-            else 
-              return false;
-          }
-      );
-    },
-
     _isOwner: function(status){
       var owner = cookie("orguseridp")
       return owner && owner == status.authorization_info.user_id
@@ -203,7 +186,7 @@ var cookie = function(name, value, options) {
 
     getLoginStatus: function(callback, status) {
       if( status.state == "AUTHORIZED") {
-        if ( !_isLoggedIn() || !_isOwner(status || (_isDisabled && _isFromPortal)) ){
+        if ( !_isLoggedIn() || !_isOwner(status) ){
           _refreshAuthorizationState(callback);
           return;       
         }
