@@ -203,7 +203,7 @@ var cookie = function(name, value, options) {
 
     getLoginStatus: function(callback, status) {
       if( status.state == "AUTHORIZED") {
-        if ( !_isLoggedIn() || !_isOwner(status || (_isDisabled && _isFromPortal)) ){
+        if ( !_isLoggedIn() || !_isOwner(status) || (_isDisabled && _isFromPortal) ){
           _refreshAuthorizationState(callback);
           return;       
         }
