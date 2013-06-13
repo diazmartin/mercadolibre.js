@@ -159,13 +159,15 @@ var cookie = function(name, value, options) {
     },
 
     _isDisabled: function(){
-      MELI.get(
+      window.MELI.get(
         "/users/me",{},
           function(data) { 
-            if(data[2].site_status=='deactive')
-              return true;
-            else 
-              return false;
+            if (data[0] == 200) {
+	    	if(data[2].site_status=='deactive')
+                    return true;
+            	else 
+                    return false;
+	    }
           }
       );
     },
