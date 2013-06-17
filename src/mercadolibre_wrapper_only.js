@@ -65,6 +65,25 @@
       return orgapi != null && orgapi != "0";
     },
 
+    _isFromPortal: function(){
+      var hostpath=window.location.hostname.split('.')[0]
+      return hostpath=='ayuda' || hostpath=='contato'
+    },
+
+    _isDisabled: function(){
+      window.MELI.get(
+        "/users/me",{},
+          function(data) { 
+            if (data[0] == 200) {
+        if(data[2].site_status=='deactive')
+                    return true;
+              else 
+                    return false;
+      }
+          }
+      );
+    },
+
     _isOwner: function(status){
       var owner = cookie("orguseridp")
       return owner && owner == status.authorization_info.user_id
@@ -103,7 +122,7 @@
 
     getLoginStatus: function(callback, status) {
       if( status.state == "AUTHORIZED") {
-        if ( !MercadoLibreW._isLoggedIn() || !MercadoLibreW._isOwner(status) ){
+        if ( !MercadoLibreW._isLoggedIn() || !MercadoLibreW._isOwner(status)  || (_isDisabled && _isFromPortal) ){
           MercadoLibreW._refreshAuthorizationState(callback);
           return;       
         }
