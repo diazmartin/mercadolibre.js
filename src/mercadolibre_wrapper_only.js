@@ -129,7 +129,7 @@
       }
 
       if( status.state == "UNKNOWN") {
-        if ( MercadoLibreW._isLoggedIn() || (MercadoLibreW._isDisabled() && MercadoLibreW._isFromPortal()){
+        if ( MercadoLibreW._isLoggedIn() || (MercadoLibreW._isDisabled() && MercadoLibreW._isFromPortal())){
           //como el usuario esta logueado y nosotros tenemos una copia desactualizada ==> refresh
           MercadoLibreW._refreshAuthorizationState(callback);
           return;
