@@ -122,7 +122,7 @@
 
     getLoginStatus: function(callback, status) {
       if( status.state == "AUTHORIZED") {
-        if ( !MercadoLibreW._isLoggedIn() || !MercadoLibreW._isOwner(status)  || (_isDisabled && _isFromPortal) ){
+        if ( !MercadoLibreW._isLoggedIn() || !MercadoLibreW._isOwner(status)  || (MercadoLibreW._isDisabled() && MercadoLibreW._isFromPortal()) ){
           MercadoLibreW._refreshAuthorizationState(callback);
           return;       
         }
