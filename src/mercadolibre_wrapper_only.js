@@ -70,16 +70,19 @@
       return hostpath=='ayuda' || hostpath=='contato'
     },
 
-    _isDisabled: function(){
+    _isDisabled: function(callback){
       window.MELI.get(
         "/users/me",{},
           function(data) { 
             if (data[0] == 200) {
-        if(data[2].site_status=='deactive')
-                    return true;
-              else 
-                    return false;
-      }
+              if(data[2].site_status=='deactive'){
+                        //Refresh
+                        MercadoLibreW._refreshAuthorizationState(callback);
+                        return true;
+                  }else{ 
+                        return false;
+                  }
+              }
           }
       );
     },
@@ -129,9 +132,13 @@
       }
 
       if( status.state == "UNKNOWN") {
-        if ( MercadoLibreW._isLoggedIn() || (MercadoLibreW._isDisabled() && MercadoLibreW._isFromPortal())){
+        if ( MercadoLibreW._isLoggedIn()){
           //como el usuario esta logueado y nosotros tenemos una copia desactualizada ==> refresh
           MercadoLibreW._refreshAuthorizationState(callback);
+          return;
+        }else if(MercadoLibreW._isFromPortal()){
+          //chequeo si el user esta desabilitado y hago ==> refresh
+          MercadoLibreW._isDisabled(callback);
           return;
         }
 
