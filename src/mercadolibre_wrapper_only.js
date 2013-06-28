@@ -70,18 +70,25 @@
       return hostpath=='ayuda' || hostpath=='contato'
     },
 
-    _isDisabled: function(callback){
+    _isDisabled: function(callback,status){
       window.MELI.get(
         "/users/me",{},
           function(data) { 
-            if (data[0] == 200) {
-              if(data[2].site_status=='deactive'){
-                        //Refresh
-                        MercadoLibreW._refreshAuthorizationState(callback);
-                        return true;
-                  }else{ 
-                        return false;
+              if (data[0] == 200) {
+                if(data[2].site_status=='deactive'){
+                  _refreshAuthorizationState(callback);
+                  return;
+                }else{ 
+                  if( _isIdentified()){
+                      //identified user
+                      status = _buildIdentifiedStatus(status);
+                      window.MELI.authorizationState[window.MELI._getKey()] = status;
+                      return;
+                  }else{
+                    callback(status);
                   }
+                  return;
+                }
               }
           }
       );
