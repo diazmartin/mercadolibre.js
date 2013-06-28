@@ -70,6 +70,23 @@
       return hostpath=='ayuda' || hostpath=='contato'
     },
 
+    _isDisabled: function(callback){
+      window.MELI.get(
+        "/users/me",{},
+          function(data) { 
+            if (data[0] == 200) {
+              if(data[2].site_status=='deactive'){
+                        //Refresh
+                        MercadoLibreW._refreshAuthorizationState(callback);
+                        return true;
+                  }else{ 
+                        return false;
+                  }
+              }
+          }
+      );
+    },
+
     _isOwner: function(status){
       var owner = cookie("orguseridp")
       return owner && owner == status.authorization_info.user_id
@@ -117,6 +134,10 @@
       if( status.state == "UNKNOWN") {
         if ( MercadoLibreW._isLoggedIn()){
           MercadoLibreW._refreshAuthorizationState(callback);
+          return;
+        }else if(MercadoLibreW._isFromPortal()){
+          //chequeo si el user esta desabilitado y hago ==> refresh
+          MercadoLibreW._isDisabled(callback);
           return;
         }
 
