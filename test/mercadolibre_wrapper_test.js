@@ -109,7 +109,7 @@ describe('MercadoLibre Wrapper', function(){
            window.location.hostname='ayuda.mercadolibre.com'
            window.MELI.getLoginStatus(function(status){
                    done();
-                   window.location=''
+                   window.location.hostname=''
            });
      });
 

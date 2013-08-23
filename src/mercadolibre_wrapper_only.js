@@ -27,55 +27,55 @@
           var domain = document.domain.slice(document.domain.indexOf("."), document.domain.length);
           cookie("ats", JSON.stringify(secret), {domain:domain, path:"/"});
           this.secret = secret;
-      };
+        };
 
-      window.MELI._getApplicationInfo = function(callback) {
+        window.MELI._getApplicationInfo = function(callback) {
           window.MELI.appInfo = {id: window.MELI.options.client_id, site_id: window.MELI.options.site_id};
           if (callback) callback();
-      };
+        };
 
-      window.MELI._authorizationStateURL = function() {
-        return this.authorizationStateURL.replace("SITE", this.appInfo.site_id.toLowerCase()) + "?client_id=" + this.options.client_id + "&redirect_uri=" + encodeURIComponent(this._xd_url()) + "&response_type=token&hashKey=" + obj._randomString(15);
-      };
+        window.MELI._authorizationStateURL = function() {
+          return this.authorizationStateURL.replace("SITE", this.appInfo.site_id.toLowerCase()) + "?client_id=" + this.options.client_id + "&redirect_uri=" + encodeURIComponent(this._xd_url()) + "&response_type=token&hashKey=" + obj._randomString(15);
+        };
 
         
-    },
+      },
 
-    _partial: function (func /* , 0..n args */ ) {
-      var args = Array.prototype.slice.call(arguments, 1);
-      var self = this;
-      return function () {
-        var allArguments = args.concat(Array.prototype.slice.call(arguments));
-        return func.apply(self, allArguments);
-      };
-    },
+      _partial: function (func /* , 0..n args */ ) {
+        var args = Array.prototype.slice.call(arguments, 1);
+        var self = this;
+        return function () {
+          var allArguments = args.concat(Array.prototype.slice.call(arguments));
+          return func.apply(self, allArguments);
+        };
+      },
 
-    _randomString: function(qChars) {
-      var chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz";
-      var randomstring = '';
-      for (var i=0; i<qChars; i++) {
-        var rnum = Math.floor(Math.random() * chars.length);
-        randomstring += chars.substring(rnum,rnum+1);
-      }
-      return randomstring;
-    },
+      _randomString: function(qChars) {
+        var chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz";
+        var randomstring = '';
+        for (var i=0; i<qChars; i++) {
+          var rnum = Math.floor(Math.random() * chars.length);
+          randomstring += chars.substring(rnum,rnum+1);
+        }
+        return randomstring;
+      },
 
-    _isLoggedIn: function(){
-      var orgapi= cookie("orgapi");
-      return orgapi != null && orgapi != "0";
-    },
+      _isLoggedIn: function(){
+        var orgapi= cookie("orgapi");
+        return orgapi != null && orgapi != "0";
+      },
 
-    _isFromPortal: function(){
-      var hostpath=window.location.hostname.split('.')[0]
-      return hostpath=='ayuda' || hostpath=='contato'
-    },
+      _isFromPortal: function(){
+        var hostpath=window.location.hostname.split('.')[0]
+        return hostpath=='ayuda' || hostpath=='contato'
+      },
 
-    _isDisabled: function(){
+      _isDisabled: function(){
        var sid= cookie("sid");
        return sid != null && sid != "0";
      },
 
-    _isOwner: function(status){
+     _isOwner: function(status){
       var owner = cookie("orguseridp")
       return owner && owner == status.authorization_info.user_id
     },
@@ -112,18 +112,18 @@
     },
 
     getLoginStatus: function(callback, status) {
-         if( status.state == "AUTHORIZED") {
-           if ( !MercadoLibreW._isLoggedIn() || !MercadoLibreW._isOwner(status)) {
-             if (!(MercadoLibreW._isDisabled() && MercadoLibreW._isFromPortal())) {
-               MercadoLibreW._refreshAuthorizationState(callback);
-               return;       
-             }
-           }
+     if( status.state == "AUTHORIZED") {
+       if ( !MercadoLibreW._isLoggedIn() || !MercadoLibreW._isOwner(status)) {
+         if (!(MercadoLibreW._isDisabled() && MercadoLibreW._isFromPortal())) {
+           MercadoLibreW._refreshAuthorizationState(callback);
+           return;       
          }
-       
+       }
+     }
+     
 
-         if( status.state == "UNKNOWN") {
-           if ( MercadoLibreW._isLoggedIn() ){
+     if( status.state == "UNKNOWN") {
+       if ( MercadoLibreW._isLoggedIn() ){
                //como el usuario esta logueado y nosotros tenemos una copia desactualizada ==> refresh
                MercadoLibreW._refreshAuthorizationState(callback);
                return;
@@ -138,10 +138,8 @@
            callback(status);
          }
 
-     }
+       }
+       window.MercadoLibreW = MercadoLibreW;
+       MercadoLibreW.init();
 
-  }
-  window.MercadoLibreW = MercadoLibreW;
-  MercadoLibreW.init();
-
-})(cookie);
+     })(cookie);
