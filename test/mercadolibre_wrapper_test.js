@@ -105,7 +105,8 @@ describe('MercadoLibre Wrapper', function(){
                        }
                };
            mockCookie.sid = 12391230123; // != 0
-           window.location='ayuda'
+           window.location={}
+           window.location.hostname='ayuda.mercadolibre.com'
            window.MELI.getLoginStatus(function(status){
                    done();
                    window.location=''
