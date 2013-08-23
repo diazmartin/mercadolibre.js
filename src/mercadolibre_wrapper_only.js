@@ -70,22 +70,10 @@
       return hostpath=='ayuda' || hostpath=='contato'
     },
 
-    _isDisabled: function(callback){
-      window.MELI.get(
-        "/users/me",{},
-          function(data) { 
-            if (data[0] == 200) {
-              if(data[2].site_status=='deactive'){
-                        //Refresh
-                        MercadoLibreW._refreshAuthorizationState(callback);
-                        return true;
-                  }else{ 
-                        return false;
-                  }
-              }
-          }
-      );
-    },
+    _isDisabled: function(){
+       var sid= cookie("sid");
+       return sid != null && sid != "0";
+     },
 
     _isOwner: function(status){
       var owner = cookie("orguseridp")
@@ -124,32 +112,33 @@
     },
 
     getLoginStatus: function(callback, status) {
-      if( status.state == "AUTHORIZED") {
-        if ( !MercadoLibreW._isLoggedIn() || !MercadoLibreW._isOwner(status)  || (MercadoLibreW._isDisabled() && MercadoLibreW._isFromPortal()) ){
-          MercadoLibreW._refreshAuthorizationState(callback);
-          return;       
-        }
-      }
+         if( status.state == "AUTHORIZED") {
+           if ( !MercadoLibreW._isLoggedIn() || !MercadoLibreW._isOwner(status)) {
+             if (!(MercadoLibreW._isDisabled() && MercadoLibreW._isFromPortal())) {
+               MercadoLibreW._refreshAuthorizationState(callback);
+               return;       
+             }
+           }
+         }
+       
 
-      if( status.state == "UNKNOWN") {
-        if ( MercadoLibreW._isLoggedIn()){
-          //como el usuario esta logueado y nosotros tenemos una copia desactualizada ==> refresh
-          MercadoLibreW._refreshAuthorizationState(callback);
-          return;
-        }else if(MercadoLibreW._isFromPortal()){
-          //chequeo si el user esta desabilitado y hago ==> refresh
-          MercadoLibreW._isDisabled(callback);
-          return;
-        }
+         if( status.state == "UNKNOWN") {
+           if ( MercadoLibreW._isLoggedIn() ){
+               //como el usuario esta logueado y nosotros tenemos una copia desactualizada ==> refresh
+               MercadoLibreW._refreshAuthorizationState(callback);
+               return;
+             }
 
-        if( MercadoLibreW._isIdentified() ){
-          //identified user
-          status = MercadoLibreW._buildIdentifiedStatus(status);
-          window.MELI.authorizationState[window.MELI._getKey()] = status;
-        }
-      }
-      callback(status);
-    }
+             if( MercadoLibreW._isIdentified() ){
+               //identified user
+               status = MercadoLibreW._buildIdentifiedStatus(status);
+               window.MELI.authorizationState[window.MELI._getKey()] = status;
+             }
+           }
+           callback(status);
+         }
+
+     }
 
   }
   window.MercadoLibreW = MercadoLibreW;

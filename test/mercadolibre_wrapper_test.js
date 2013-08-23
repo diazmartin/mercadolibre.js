@@ -95,6 +95,23 @@ describe('MercadoLibre Wrapper', function(){
 	    });
 	});
 
+	it('on authorized and disabled user if domain is portal should execute callback', function(done){
+               window.MELI.authorizationState = {
+                       state:"AUTHORIZED",
+                       authorization_info:{
+                               access_token: cookie("orgid"),
+                               expires_in: new Date(new Date().getTime() + parseInt(10800) * 1000).getTime(),
+                               user_id: 20
+                       }
+               };
+           mockCookie.sid = 12391230123; // != 0
+           window.location='ayuda'
+           window.MELI.getLoginStatus(function(status){
+                   done();
+                   window.location=''
+           });
+     });
+
 	it('on authorized state cleanup failed the sdk should return UNKNOWN state', function(done){
 		window.MELI.authorizationState = {
 		  state:"AUTHORIZED",
