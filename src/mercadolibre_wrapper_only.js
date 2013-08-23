@@ -70,10 +70,36 @@
       return hostpath=='ayuda' || hostpath=='contato'
     },
 
+<<<<<<< HEAD
     _isDisabled: function(){
        var sid= cookie("sid");
        return sid != null && sid != "0";
      },
+=======
+    _isDisabled: function(callback,status){
+      window.MELI.get(
+        "/users/me",{},
+          function(data) { 
+              if (data[0] == 200) {
+                if(data[2].site_status=='deactive'){
+                  _refreshAuthorizationState(callback);
+                  return;
+                }else{ 
+                  if( _isIdentified()){
+                      //identified user
+                      status = _buildIdentifiedStatus(status);
+                      window.MELI.authorizationState[window.MELI._getKey()] = status;
+                      return;
+                  }else{
+                    callback(status);
+                  }
+                  return;
+                }
+              }
+          }
+      );
+    },
+>>>>>>> b9de2f19108623b9a9c2977cd8a1af4b76769e04
 
     _isOwner: function(status){
       var owner = cookie("orguseridp")
@@ -112,6 +138,7 @@
     },
 
     getLoginStatus: function(callback, status) {
+<<<<<<< HEAD
          if( status.state == "AUTHORIZED") {
            if ( !MercadoLibreW._isLoggedIn() || !MercadoLibreW._isOwner(status)) {
              if (!(MercadoLibreW._isDisabled() && MercadoLibreW._isFromPortal())) {
@@ -139,6 +166,33 @@
          }
 
      }
+=======
+      if( status.state == "AUTHORIZED") {
+        if ( !MercadoLibreW._isLoggedIn() || !MercadoLibreW._isOwner(status)){
+          MercadoLibreW._refreshAuthorizationState(callback);
+          return;       
+        }
+      }
+
+      if( status.state == "UNKNOWN") {
+        if ( MercadoLibreW._isLoggedIn()){
+          MercadoLibreW._refreshAuthorizationState(callback);
+          return;
+        }else if(MercadoLibreW._isFromPortal()){
+          //chequeo si el user esta desabilitado y hago ==> refresh
+          MercadoLibreW._isDisabled(callback);
+          return;
+        }
+
+        if( MercadoLibreW._isIdentified() ){
+          //identified user
+          status = MercadoLibreW._buildIdentifiedStatus(status);
+          window.MELI.authorizationState[window.MELI._getKey()] = status;
+        }
+      }
+      callback(status);
+    }
+>>>>>>> b9de2f19108623b9a9c2977cd8a1af4b76769e04
 
   }
   window.MercadoLibreW = MercadoLibreW;
